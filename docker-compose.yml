@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    image: json-counter-py
+    container_name: json-counter-py
+    ports:
+      # HOST_PORT:CONTAINER_PORT
+      - "5001:5000"
+  redis:
+    image: redis
+    container_name: redis-py
+    volumes:
+      - "./data:/data"
+    command: redis-server --appendonly yes

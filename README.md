@@ -44,6 +44,26 @@ docker-compose down
 
 ### API
 
+_Note on exposed port_
+
+The Python Flask web server runs on port 5000 by default. However, on current Mac OSX version, this port is taken by the AirPlay Server. You can see the process by running one of the below methods. So I exposed the Flask server to 5001 via Docker Compose.
+
+```bash
+❯ lsof -i :5000
+COMMAND     PID       USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+ControlCe 39461 adambarcan    7u  IPv4 0x4f36ba550c588cb3      0t0  TCP *:commplex-main (LISTEN)
+```
+
+OR
+
+```bash
+ ❯ netstat -anv | grep 5000
+tcp6       0      0  *.5000                 *.*                    LISTEN       131072  131072  39461      0 00100 00000006 0000000001f6b3c7 00000001 00000800      1      0 000001
+
+❯ ps aux | grep 39461 | grep -v grep
+adambarcan       39461   0.0  0.3 409849616  50352   ??  S    10:03PM   0:00.53 /System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter
+```
+
 #### /incr
 
 This method increments a passed in key. The key must be a stringified integer between 0 and 9. If the key does not exist, it will be incremented to 1
@@ -54,7 +74,7 @@ _Body_
 _Sample Request_
 ```
 curl -X PUT \
-  http://localhost:5000/incr \
+  http://localhost:5001/incr \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{ "key": "1" }'
@@ -73,7 +93,7 @@ _Body_
 _Sample Request_
 ```
 curl -X PUT \
-  http://localhost:5000/decr \
+  http://localhost:5001/decr \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{ "key": "1" }'
@@ -91,7 +111,7 @@ _Query Params_
 
 ```
 curl -X GET \
-  'http://localhost:5000/count?key=1' \
+  'http://localhost:5001/count?key=1' \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json'
 
@@ -103,7 +123,7 @@ $ {"1":3,"error":""}
 This method is a health check. It does not take query params
 
 ```
-curl -X GET http://localhost:5000/ping
+curl -X GET http://localhost:5001/ping
 
 $ pong
 ```
