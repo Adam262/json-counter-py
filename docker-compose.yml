@@ -11,5 +11,5 @@ services:
     image: redis
     container_name: redis-py
     volumes:
-      - "./data:/data"
+      - "./data-redis:/data-redis"
     command: redis-server --appendonly yes
